@@ -1,9 +1,16 @@
 ## Move Bulk Files from a List (Shell Script)
 
-### Introduction
-This is a very basic MacOS/UNIX/LINUX shell script that will move a long list of files from one a collection of locations to another location, maintining the existing folder/tree structure of your files. I made this script because I had to move over 100K image files that have identical filenames in a dozen different folders (ie, `images/filename.jpg, images/thumbnail/filename.jpg, images/large/filename.jpg` etc) that were linked to drupal articles dating before a certain date. One of my clients was tired of copyright trolls suing him for images he thought were "creative commons" and basically decided to move/delete all potentially copyright infringing images from his server until he could ensure each image was copyright free. Anyway, this script assumes you already were able to generate a list of files that you want to move, and assumes you also have a list of folders these files might reside in.
+### Introduction & Use Case
+This is a very basic MacOS/UNIX/LINUX shell script that will move a long list of files located that could be inside multiple folders, maintining the existing folder/tree structure of your files and LEAVING behind files that aren't included in your move list. If you have a long list of files to move, but don't want to move EVERYTHING from inside your folders, then this script is for you.
+
+**OPTIONAL BACKSTORY:** I made this script because I had to move over 100K potentially copyright infringing image files from out of a public webserver directory based on a list that was generated via an SQL query for all files uploaded before 2017. Each filename could be duplicated dozens of times over in many different folders (ie, `images/somespookyimage.jpg, images/thumbnail/somespookyimage.jpg, images/large/somespookyimage.jpg` etc) and the only way of knowing each file's creation date was by inferring it from corresponding drupal node/articles that dated before some day in 2016 when this website publisher began using official stock images. The file system's dates were not accurate because all the files were at some point moved from one server to another, and all create dates were set to the date the files were copied over. We could determine file dates via the Drupal MySQL database, thankfully. We went through all this trouble because my client was tired of copyright trolls suing him for images uploaded over 5 years ago that his staff thought were "creative commons" (but apparently were not), and he basically decided to move/delete all potentially copyright infringing images from his server until he could ensure each image was indeed copyright free.
 
 **If you're interested:** *I generated my list of files with an SQL Query and cleaned it up in a Google Spreadsheet. I'll try to create a Readme for this process in the very near future.*
+
+**WHAT THIS SCRIPT ISN'T:** If your filesystem data is sound, (in particular, your file creation/modified dates), then there are easier ways to move files based on creation date. There are hundreds of scripts out there, I'm sure, that will help you use bash and/or regex to bulk move selected files based on filesystem metadata.
+
+### Requirements
+You'll need to be able to run *nix shell scripts, obviously. And this script assumes you are able to generate a line separated list of filenames that you want to move (like we were able to), and assumes you also have a list of folders these files might reside in.
 
 ### Files & Folders Explaination
 1. There are 3 files you need to be concerned with:
