@@ -1,0 +1,3 @@
+source_files
+source_files/large
+source_files/thumbnails

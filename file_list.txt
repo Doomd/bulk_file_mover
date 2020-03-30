@@ -1,0 +1,3 @@
+file-with-dashes.jpg
+file with spaces.jpg
+file(with parentheses).jpg
