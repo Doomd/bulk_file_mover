@@ -1,3 +1,4 @@
 file-with-dashes.jpg
 file with spaces.jpg
 file(with parentheses).jpg
+file_that_dont_exist.jpg
