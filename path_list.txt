@@ -1,4 +1,0 @@
-source
-source/thumbnails
-source/large
-source/dummy_dir
