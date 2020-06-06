@@ -1,2 +1,5 @@
 .history
 dev
+bulk_file_mover/backups
+/*.jpg
+/*.png
