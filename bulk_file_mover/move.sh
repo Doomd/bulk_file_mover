@@ -6,7 +6,7 @@ fileListFile="file_list.txt" # text file list of all filenames to move
 subDirDepth=5 # how many potential subdirectories should we include/search?
 includeParentDir="yes" # "yes/no" include files IN the root/parent directory?
 #### COPY, MOVE, or DELETE! ####
-action="cp -p"
+action="mv"
 # choose "cp -p" (for copy with optional timestamp preservation)
 # or "mv" for move
 # or "rm" for delete
