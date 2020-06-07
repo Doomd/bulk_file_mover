@@ -3,3 +3,4 @@ file with spaces.jpg
 file(with parentheses).jpg
 file_that_dont_exist.jpg
 file_diff_format.png
+large_file.jpg
