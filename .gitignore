@@ -4,3 +4,4 @@ parent
 bulk_file_mover/backups
 /*.jpg
 /*.png
+.DS_Store
