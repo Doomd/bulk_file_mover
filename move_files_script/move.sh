@@ -5,12 +5,9 @@ pathListFile="path_list.txt" # text file list of all top level directory paths w
 fileListFile="file_list.txt" # text file list of all filenames to move
 subDirDepth=5 # how many potential subdirectories should we include/search?
 includeParentDir="yes" # "yes/no" include files IN the root/parent directory?
-#### COPY, MOVE, or DELETE! ####
-action="mv"
+action="cp - p"
 # choose "cp -p" (for copy with optional timestamp preservation)
 # or "mv" for move
-# or "rm" for delete
-
 
 #### DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING
 scriptDir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
@@ -22,9 +19,10 @@ fi
 if [[ $action == *"cp"* ]]; then
 	actionWord="copied"
 fi
-if [[ $action == *"rm"* ]]; then
-	actionWord="removeD"
-fi
+# delete functionality not tested...and log files not adapted for delete (yet)
+# if [[ $action == *"rm"* ]]; then
+# 	actionWord="removed"
+# fi
 ts_title() {
 	date +"%Y-%m-%d-%H-%M-%S"
 }
