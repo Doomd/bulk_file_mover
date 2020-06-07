@@ -33,7 +33,6 @@ ts_indented() {
 }
 destPath="$scriptDir/backups"
 destFilePath="$destPath/files"
-# Log Locat1ion:
 logLocation="$destPath/logs/$(ts_title)"
 log_all="$logLocation/all.log"
 log_files_touched="$logLocation/files_touched.log"
@@ -63,16 +62,18 @@ echo -en "\n\n\033[42m\033[30m$uniqueExt\033[m\n"
 fileExtensions=()
 while IFS= read -r file || [ -n "$file" ];
     do
-        base=${file%.*}
-		extension=${file#$base.}
-		if [[ "$extension"  =~ "${fileExtensions[@]}" ]]; then
-			echo "$(ts_indented) > DUPLICATE file extention, '$extension' (from '$file'). Skipped." | tee -a $log_all
-		else
-			if [[ ! "$extension"  =~ "${fileExtensions[@]}" ]]; then
-				fileExtensions+=("$extension")
-				echo "$(ts_indented) > UNIQUE file extention, '$extension' (from '$file') added to fileExtensions array." | tee -a $log_all
+			base=${file%.*}
+			extension=${file#$base.}
+			if [[ "${fileExtensions[@]}" =~ "${extension}" ]]; then
+				echo "$(ts_indented) > DUPLICATE file extention, '$extension' (from '$file'). Skipped." | tee -a $log_all
+			else
+				if [[ ! "${fileExtensions[@]}" =~ "${extension}" ]]; then
+					#echo "file extenstions array: ${fileExtensions[@]}"
+					fileExtensions+=("$extension")
+					echo "$(ts_indented) > UNIQUE file extention, '$extension' (from '$file') added to fileExtensions array." | tee -a $log_all
+					#echo "file extenstions array: ${fileExtensions[@]}"
+				fi
 			fi
-		fi
    	done < $fileListFile
 
 i=1 ## create an index for our allPaths array (compatible w bash & zsh)
@@ -129,7 +130,7 @@ for p in "${pathList[@]}"
 											numFiles=$((`ls ${subdir} | grep $fileType | wc -l`))
 											if [ $numFiles -gt 0 ]; then
 												echo "$(ts_indented) > There are $numFiles files with '$fileType' ext in '${subdir}'" | tee -a $log_all
-												if [[ ! " ${allPaths[@]} " =~ " $parentDir/${subdir} " ]]; then
+												if [[ ! "${allPaths[@]}" =~ "$parentDir/${subdir}" ]]; then
 													allPaths[$i]="$subdir"
 													echo "$(ts_indented) > allPaths[$i] = '${allPaths[i]}' (Found Subdirectory)" | tee -a $log_all
 													((i++))
@@ -157,13 +158,15 @@ files_not_touched_header="Files NOT Found (and NOT $actionWord) [ $(ts_title) ]\
 echo -en $files_not_touched_header >> $log_files_not_touched
 while IFS= read -r file || [ -n "$file" ];
 	do
+		reject=""
+		match=""
 		for path in "${allPaths[@]}"
 			do
 				if test -f "$path/$file"; then
 					#echo -en "\n" | tee -a $log_all
 					echo "$(ts_indented) > '$file' was found in '$path' directory." | tee -a $log_all
 					if [ "$path" = "$parentDir" ]; then
-						if [ -d " $destFilePath " ]; then
+						if [ -d "$destFilePath" ]; then
 							echo "$(ts_indented) > '$destFilePath' directory already exists." | tee -a $log_all
 						else
 							mkdir -p "$destFilePath"
@@ -171,8 +174,8 @@ while IFS= read -r file || [ -n "$file" ];
 						fi
 					else
 						noParentPath="${path#$parentPath}"
-						if [ -d " $destFilePath/$path " ]; then
-							echo "$(ts_indented) > '$destFilePath/$path' directory already exists." | tee -a $log_all
+						if [ -d "$destFilePath/$noParentPath" ]; then
+							echo "$(ts_indented) > '$destFilePath/$noParentPath' directory already exists." | tee -a $log_all
 						else
 							mkdir -p "$destFilePath/$noParentPath"
 							echo "$(ts_indented) > '$destFilePath/$noParentPath' directory created." | tee -a $log_all
@@ -181,30 +184,32 @@ while IFS= read -r file || [ -n "$file" ];
 					## if the file is IN the root/parent directory...
 					if [ "$path" = "$parentDir" ]; then
 						$action "$path/$file" "$destFilePath/$file"
-						echo -en "$(ts_indented) > '$file' $actionWord to '$destFilePath'" | tee -a $log_all
+						echo -en "$(ts_indented) > '$file' $actionWord from '$path' to '$destFilePath'" | tee -a $log_all
 						echo "'$destFilePath/$file'" >> $log_files_touched
 						echo "'$path/$file' was $actionWord to '$destFilePath/$file'" >> $log_files_movement
 					## else if it's in a subfolder(s) of the parent directory
 					else
 						$action "$path/$file" "$destFilePath/$noParentPath/$file"
-						echo -en "$(ts_indented) > '$file' $actionWord to '$destFilePath/$noParentPath'" | tee -a $log_all
+						echo -en "$(ts_indented) > '$file' $actionWord from '$path' to '$destFilePath/$noParentPath'" | tee -a $log_all
 						echo "'$destFilePath/$noParentPath/$file'" >> $log_files_touched
 						echo "'$path/$file' was $actionWord to '$destFilePath/$noParentPath/$file'" >> $log_files_movement
 					fi
 					echo -en "\n" | tee -a $log_all
-					reject=""
+					match="yes"
 				else
 					echo "$(ts_indented) > '$file' was not found in '$path'" | tee -a $log_all
 					reject="$file"
 				fi
 			done
-			if [ -z "$reject" ]; then
+			## if there were any file matches in ANY of the subdirectories, skip logging in no touch log
+			if [ ! -z "$match" ]; then
 				echo -en "\n" | tee -a $log_all
 			else
-				# echo "reject file is $reject"
+				# if there were no matches, list file in no touch log
 				echo -en "\n" | tee -a $log_all
-				echo "'$file'" >> $log_files_not_touched
+				echo "'$reject'" >> $log_files_not_touched
 			fi
+			match="" #reset match
 	done < $fileListFile
 
 echo -en "In case you missed it...Copied/Moved files are in:\n  '\033[32m$destFilePath\033[m'"
