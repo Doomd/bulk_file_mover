@@ -30,7 +30,7 @@ You'll need to be able to run Linux/Unix/Mac shell scripts, obviously. And this 
 
 ### Sample Folder Structure
 This folder tree illustrates where to place the script folder in relation to the files you want to move:
-
+```
 parent
  ┣ move_files_script
  ┃ ┣ file_list.txt
@@ -57,6 +57,7 @@ parent
  ┣ file(with parentheses).jpg
  ┣ file-with-dashes.jpg
  ┗ file_to_leave_alone.jpg
+ ```
 
 ### Instructions
 1. Download or Clone this repository. You only need the folder `move_files_script`, but I've included the `source_sample` folder if you want to perform testing on fake files before touching your own. Inside a terminal window, navigate to the `move_files_script` folder.
